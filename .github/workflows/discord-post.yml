@@ -13,11 +13,11 @@ jobs:
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           MESSAGE: |
-            🗓️ Weekly Pay Reminder
-            • Check last weekend’s events
-            • Pay DJs, assistants, and ops
-            • Post your recap in #event-recaps
-            • Log gear issues in #ops-issues
+            🗓️ Weekly Reminder
+            • Plan ahead. Set up client meetings and plan gear swap for your next two weeks.
+            • Post your recap in #event-recaps-and-issues
+            • Log gear issues in #gear-problems
+            • Remember that you are creating memories that last a lifetime. Treat it that way!! Make em' swoon behind the scenes and on the dance floor.
         run: |
           jq -n --arg content "$MESSAGE" \
             '{content: $content}' \
