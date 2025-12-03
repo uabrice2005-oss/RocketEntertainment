@@ -3,7 +3,9 @@ name: Post to Discord
 on:
   workflow_dispatch: {}       # lets you run it manually
   schedule:
-    - cron: "0 15 * * 1"      # runs every Monday at 9:00 AM Central Time (15:00 UTC)
+  - cron: "0 15 1-7 * 1"      # 1st Monday of each month at 9:00 AM Central
+  - cron: "0 15 15-21 * 1"    # 3rd Monday of each month at 9:00 AM Central
+
 
 jobs:
   send:
