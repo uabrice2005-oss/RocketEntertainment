@@ -1,10 +1,12 @@
 name: Post to Discord
 
 on:
-  workflow_dispatch: {}       # lets you run it manually
+on:
+  workflow_dispatch: {}        # lets you run it manually
   schedule:
-  - cron: "0 15 1-7 * 1"      # 1st Monday of each month at 9:00 AM Central
-  - cron: "0 15 15-21 * 1"    # 3rd Monday of each month at 9:00 AM Central
+    - cron: '0 15 * * 1'       # every Monday at 9:00 AM Central (15:00 UTC)
+
+
 
 
 jobs:
@@ -20,8 +22,20 @@ jobs:
             • Post your recap in #event-recaps-and-issues
             • Log gear issues in #gear-problems
             • Remember that you are creating memories that last a lifetime. Treat it that way!! Make em' swoon behind the scenes and on the dance floor.
-        run: |
-          jq -n --arg content "$MESSAGE" \
-            '{content: $content}' \
-            | curl -fsSL -H 'Content-Type: application/json' \
-              -d @- "$DISCORD_WEBHOOK_URL"
+run: |
+  # Get the day of month in UTC (same calendar day as Central at 15:00 UTC)
+  day=$(date -u +'%d')
+
+  # Only allow 1st and 3rd Monday:
+  # 1st Monday = day 1-7
+  # 3rd Monday = day 15-21
+  if ! { { [ "$day" -ge 1 ] && [ "$day" -le 7 ]; } || { [ "$day" -ge 15 ] && [ "$day" -le 21 ]; }; }; then
+    echo "Not 1st or 3rd Monday (day=$day). Skipping Discord post."
+    exit 0
+  fi
+
+  # If we got here, it is 1st or 3rd Monday → send the message
+  jq -n --arg content "$MESSAGE" '{content: $content}' \
+    | curl -fsSL -H 'Content-Type: application/json' \
+      -d @- "$DISCORD_WEBHOOK_URL"
+
